@@ -1,17 +1,11 @@
 // Include the necessary headers
 #include <stdio.h>
 #include <curl/curl.h>
+#include "Auth/auth.h"
 
 int main(void)
 {
-
-    /*
-     * emailAddress: The email address to use for authentication (https://www.rfc-editor.org/errata/eid1690)
-     * emailPassword: The password to use for authentication
-     * accountType: The type of account to use for authentication (POP3, IMAP, SMTP)
-     * mailServer: The mail server to use for authentication (https://en.wikipedia.org/wiki/Fully_qualified_domain_name)
-     * url: The combined account type and mail server to use for authentication
-     */
+    // Declare the necessary variables
     char emailAddress[254], emailPassword[128], accountType[5], mailServer[255], url[303];
 
     CURL *curl;
@@ -21,18 +15,11 @@ int main(void)
 
     if (curl)
     {
-        // Prompt the user to enter email account information
-        printf("Email Address: ");
-        scanf("%s", emailAddress);
-        printf("Password: ");
-        scanf("%s", emailPassword);
-        printf("Account Type (POP3 or IMAP): ");
-        scanf("%s", accountType);
-        printf("Mail Server: ");
-        scanf("%s", mailServer);
+        // Get the user input for the email address, password, account type, and mail server
+        authenticate_user_input(emailAddress, emailPassword, accountType, mailServer);
 
-        // Combine the account type and mail server into a single str with following format: accountType://mailServer
-        sprintf(url, "%s://%s", accountType, mailServer);
+        // Combine the account type and mail server into a URL
+        combine_url(url, accountType, mailServer);
 
         /*
          * Initialize the CURL object with the necessary options:
@@ -58,6 +45,7 @@ int main(void)
             printf("Login successful!\n");
         }
 
+        // Cleanup the CURL object
         curl_easy_cleanup(curl);
     }
     else
