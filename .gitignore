@@ -1,0 +1,6 @@
+# Avoid pushing the session file to the repository
+session.txt
+
+# Ignore all the compiled files
+*.o
+main
