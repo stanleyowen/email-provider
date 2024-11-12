@@ -1,12 +1,13 @@
-CC = clang
-CFLAGS = -Wall
-LIBS = -lcurl
-TARGET = main
+CC = gcc
+CFLAGS = -Wall -I./Auth
+DEPS = Auth/auth.h
+OBJ = main.o Auth/auth.o
 
-all: $(TARGET)
+%.o: %.c $(DEPS)
+	$(CC) -c -o $@ $< $(CFLAGS)
 
-$(TARGET): main.c
-	$(CC) $(CFLAGS) -o $(TARGET) main.c $(LIBS)
+main: $(OBJ)
+	$(CC) -o $@ $^ $(CFLAGS) -lcurl
 
 clean:
-	rm -f $(TARGET)
+	rm -f *.o main Auth/*.o
