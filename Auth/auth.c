@@ -26,7 +26,29 @@ void authenticate_user_input(char *emailAddress, char *emailPassword, char *acco
  * url: The combined account type and mail server to use for authentication in the format accountType://mailServer
  * Example: pop3://mail.ntust.edu.tw
  */
-void combine_url(char *url, char *accountType, char *mailServer)
+void combine_url(char *mailServerURL, char *accountType, char *mailServer)
 {
-    sprintf(url, "%s://%s", accountType, mailServer);
+    sprintf(mailServerURL, "%s://%s", accountType, mailServer);
+}
+
+// Read the user input from the terminal and save it to a file for maintaining the user session
+void save_user_session(char *emailAddress, char *emailPassword, char *accountType, char *mailServerURL)
+{
+    // Open the file in write mode
+    FILE *file = fopen("session.txt", "w");
+
+    // Write and save the credentials to the file
+    fprintf(file, "%s\n%s\n%s\n%s\n", emailAddress, emailPassword, accountType, mailServerURL);
+    fclose(file);
+}
+
+// Read the user session from the file
+void read_user_session(char *emailAddress, char *emailPassword, char *accountType, char *mailServerURL)
+{
+    // Open the file in read mode
+    FILE *file = fopen("session.txt", "r");
+
+    // Read the credentials from the file
+    fscanf(file, "%s\n%s\n%s\n%s\n", emailAddress, emailPassword, accountType, mailServerURL);
+    fclose(file);
 }
