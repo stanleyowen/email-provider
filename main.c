@@ -34,35 +34,31 @@ int main(void)
         // Combine the account type and mail server into a single str with following format: accountType://mailServer
         sprintf(url, "%s://%s", accountType, mailServer);
 
-        printf("Email Address: %s\n", emailAddress);
-        printf("Password: %s\n", emailPassword);
-        printf("Account Type: %s\n", accountType);
-        printf("Mail Server: %s\n", url);
+        /*
+         * Initialize the CURL object with the necessary options:
+         * CURLOPT_USERNAME: The username or email to use for authentication
+         * CURLOPT_PASSWORD: The password to use for authentication
+         * CURLOPT_URL: The URL of the website to authenticate against
+         */
+        curl_easy_setopt(curl, CURLOPT_USERNAME, emailAddress);
+        curl_easy_setopt(curl, CURLOPT_PASSWORD, emailPassword);
+        curl_easy_setopt(curl, CURLOPT_URL, url);
 
-        // /*
-        //  * Initialize the CURL object with the necessary options:
-        //  * CURLOPT_USERNAME: The username or email to use for authentication
-        //  * CURLOPT_PASSWORD: The password to use for authentication
-        //  * CURLOPT_URL: The URL of the website to authenticate against
-        //  */
+        // Enable verbose mode to display the authentication process
+        curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+        res = curl_easy_perform(curl);
 
-        // curl_easy_setopt(curl, CURLOPT_USERNAME, emailAddress);
-        // curl_easy_setopt(curl, CURLOPT_PASSWORD, emailPassword);
-        // curl_easy_setopt(curl, CURLOPT_URL, url);
+        // Check if the authentication was successful
+        if (res != CURLE_OK)
+        {
+            fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+        }
+        else
+        {
+            printf("Login successful!\n");
+        }
 
-        // curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
-
-        // res = curl_easy_perform(curl);
-        // if (res != CURLE_OK)
-        // {
-        //     fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
-        // }
-        // else
-        // {
-        //     printf("Login successful!\n");
-        // }
-
-        // curl_easy_cleanup(curl);
+        curl_easy_cleanup(curl);
     }
     else
     {
