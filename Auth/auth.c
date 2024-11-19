@@ -12,13 +12,16 @@
  */
 void authenticate_user_input(char *emailAddress, char *emailPassword, char *accountType, char *mailServer)
 {
-    printf("Email Address: ");
+    printf("Email Address\t\t\t: ");
     scanf("%254s", emailAddress);
-    printf("Password: ");
+
+    printf("Password\t\t\t: ");
     scanf("%128s", emailPassword);
-    printf("Account Type (POP3 or IMAP): ");
+
+    printf("Account Type (POP3 or IMAP)\t: ");
     scanf("%5s", accountType);
-    printf("Mail Server: ");
+
+    printf("Mail Server\t\t\t: ");
     scanf("%255s", mailServer);
 }
 
@@ -28,27 +31,5 @@ void authenticate_user_input(char *emailAddress, char *emailPassword, char *acco
  */
 void combine_url(char *mailServerURL, char *accountType, char *mailServer)
 {
-    sprintf(mailServerURL, "%s://%s", accountType, mailServer);
-}
-
-// Read the user input from the terminal and save it to a file for maintaining the user session
-void save_user_session(char *emailAddress, char *emailPassword, char *accountType, char *mailServerURL)
-{
-    // Open the file in write mode
-    FILE *file = fopen("session.txt", "w");
-
-    // Write and save the credentials to the file
-    fprintf(file, "%s\n%s\n%s\n%s\n", emailAddress, emailPassword, accountType, mailServerURL);
-    fclose(file);
-}
-
-// Read the user session from the file
-void read_user_session(char *emailAddress, char *emailPassword, char *accountType, char *mailServerURL)
-{
-    // Open the file in read mode
-    FILE *file = fopen("session.txt", "r");
-
-    // Read the credentials from the file
-    fscanf(file, "%s\n%s\n%s\n%s\n", emailAddress, emailPassword, accountType, mailServerURL);
-    fclose(file);
+    sprintf(mailServerURL, "%s://%s/INBOX/;UID=1", accountType, mailServer);
 }

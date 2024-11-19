@@ -2,11 +2,20 @@
 #include <stdio.h>
 #include <curl/curl.h>
 #include "Auth/auth.h"
+#include "Auth/session.h"
+
+// Callback function to write the response data
+static size_t write_callback(void *ptr, size_t size, size_t nmemb, void *userdata)
+{
+    size_t total_size = size * nmemb;
+    fwrite(ptr, size, nmemb, stdout);
+    return total_size;
+}
 
 int main(void)
 {
     // Declare the necessary variables
-    char emailAddress[254], emailPassword[128], accountType[5], mailServer[255], mailServerURL[303];
+    char emailAddress[254], emailPassword[128], accountType[5], mailServer[255], mailServerURL[500];
 
     CURL *curl;
     CURLcode res;
@@ -42,6 +51,7 @@ int main(void)
         curl_easy_setopt(curl, CURLOPT_USERNAME, emailAddress);
         curl_easy_setopt(curl, CURLOPT_PASSWORD, emailPassword);
         curl_easy_setopt(curl, CURLOPT_URL, mailServerURL);
+        curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
 
         // Enable verbose mode to display the authentication process
         curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
