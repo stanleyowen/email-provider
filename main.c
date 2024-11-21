@@ -33,19 +33,22 @@ int main(void)
     // Loop to continue the session until the user decides to exit
     do
     {
-        if (curl)
+        if (!curl)
         {
-            login(curl, sessionFileName, emailAddress, emailPassword, mailServerURL);
+            fprintf(stderr, "Failed to initialize CURL.\n");
+            return 1;
+        }
 
+        if (login(curl, sessionFileName, mailServerURL, emailAddress, emailPassword, NULL))
+        {
             // Print the layout of the email client
             layout(&continueSession);
         }
-        else
-        {
-            fprintf(stderr, "Failed to initialize CURL.\n");
-        }
 
     } while (continueSession != 0);
+
+    // Cleanup the CURL object
+    curl_easy_cleanup(curl);
 
     return 0;
 }

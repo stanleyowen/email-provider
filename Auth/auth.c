@@ -84,7 +84,13 @@ void login(CURL *curl, const char *sessionFileName, char *emailAddress, char *em
 
     // Check for errors
     if (res != CURLE_OK)
+    {
         fprintf(stderr, "Failed to login: %s\n", curl_easy_strerror(res));
+        return 0;
+    }
     else
+    {
         printf("Login successful.\n");
+        return 1;
+    }
 }
