@@ -1,5 +1,6 @@
 # Avoid pushing the session file to the repository
 session.txt
+output.html
 
 # Ignore all the compiled files
 *.o
