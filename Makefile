@@ -16,4 +16,4 @@ main: $(OBJ)
 
 # Clean target to remove compiled files
 clean:
-	rm -f *.o main Auth/*.o
+	rm -f *.o main Auth/*.o Base/*.o

@@ -46,8 +46,9 @@ void combine_url(char *mailServerURL, char *accountType, char *mailServer, const
     }
 }
 
-void login(CURL *curl, const char *sessionFileName, char *emailAddress, char *emailPassword, char *mailServerURL)
+int login(CURL *curl, const char *sessionFileName, char *mailServerURL, char *emailAddress, char *emailPassword, char *null)
 {
+
     // Declare necessary local variables and return it to the main function using pointers
     char accountType[5], mailServer[255];
 
