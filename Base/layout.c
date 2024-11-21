@@ -15,33 +15,39 @@ void layout(_Bool *continueSession)
     printf("4. Compose Email\n");
     printf("5. Exit\n");
 
-    printf("Enter your choice: ");
-    scanf("%d", &userChoice);
+    // Prompt the user to enter a choice until a valid choice is entered
+    do
+    {
+        printf("Enter your choice: ");
+        scanf("%d", &userChoice);
 
-    if (userChoice == 1)
-    {
-        printf("Viewing Inbox...\n");
-    }
-    else if (userChoice == 2)
-    {
-        printf("Viewing Email...\n");
-    }
-    else if (userChoice == 3)
-    {
-        printf("Deleting Email...\n");
-    }
-    else if (userChoice == 4)
-    {
-        printf("Composing Email...\n");
-    }
-    else if (userChoice == 5)
-    {
-        printf("Exiting application\n");
-        *continueSession = 0;
-    }
-    else
-    {
-    }
+        if (userChoice == 1)
+        {
+            printf("Viewing Inbox...\n");
+        }
+        else if (userChoice == 2)
+        {
+            printf("Viewing Email...\n");
+        }
+        else if (userChoice == 3)
+        {
+            printf("Deleting Email...\n");
+        }
+        else if (userChoice == 4)
+        {
+            printf("Composing Email...\n");
+        }
+        else if (userChoice == 5)
+        {
+            printf("Exiting application\n");
+            *continueSession = 0;
+            break;
+        }
+        else
+        {
+            printf("Invalid choice. Please try again.\n");
+        }
+    } while (userChoice < 1 || userChoice > 5);
 
     printf("\n");
 }

@@ -3,8 +3,8 @@ CC = gcc
 CFLAGS = -Wall -I./Auth
 
 # Source files and dependencies
-DEPS = Auth/auth.h Auth/session.h
-OBJ = main.o Auth/auth.o Auth/session.o
+DEPS = Auth/auth.h Auth/session.h Base/layout.h
+OBJ = main.o Auth/auth.o Auth/session.o Base/layout.o
 
 # Pattern rule for compiling object files
 %.o: %.c $(DEPS)
