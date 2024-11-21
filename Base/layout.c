@@ -1,10 +1,12 @@
 // Include the necessary headers
 #include <stdio.h>
+#include <curl/curl.h>
 
 #include "layout.h"
+#include "../Operation/readEmail.h"
 
 // Print the layout of the email client
-void layout(_Bool *continueSession)
+void layout(CURL *curl, _Bool *continueSession, const char *outputFileName, char *mailServerURL)
 {
     int userChoice;
 
@@ -15,7 +17,7 @@ void layout(_Bool *continueSession)
     printf("4. Compose Email\n");
     printf("5. Exit\n");
 
-    // Prompt the user to enter a choice until a valid choice is entered
+    // Loop the prompt until the user decides to exit the application
     do
     {
         printf("Enter your choice: ");
@@ -23,11 +25,11 @@ void layout(_Bool *continueSession)
 
         if (userChoice == 1)
         {
-            printf("Viewing Inbox...\n");
+            readInbox(curl, mailServerURL);
         }
         else if (userChoice == 2)
         {
-            printf("Viewing Email...\n");
+            readEmailByID(curl, outputFileName, mailServerURL);
         }
         else if (userChoice == 3)
         {
@@ -47,7 +49,7 @@ void layout(_Bool *continueSession)
         {
             printf("Invalid choice. Please try again.\n");
         }
-    } while (userChoice < 1 || userChoice > 5);
+    } while (continueSession != 0);
 
     printf("\n");
 }
