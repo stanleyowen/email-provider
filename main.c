@@ -16,6 +16,7 @@ int main(void)
 {
     // Declare the necessary variables
     char emailAddress[254], emailPassword[128], accountType[5], mailServer[255], mailServerURL[500];
+    char emailID[9];
 
     CURL *curl;
     CURLcode res;
@@ -28,7 +29,7 @@ int main(void)
         if (fopen("session.txt", "r"))
         {
             // Read the user session from the file
-            read_user_session(emailAddress, emailPassword, accountType, mailServerURL);
+            read_user_session(emailAddress, emailPassword, accountType, mailServer);
         }
         else
         {
@@ -36,11 +37,19 @@ int main(void)
             authenticate_user_input(emailAddress, emailPassword, accountType, mailServer);
 
             // Combine the account type and mail server to form the mail server URL
-            combine_url(mailServerURL, accountType, mailServer);
+            combine_url(mailServerURL, accountType, mailServer, NULL);
 
             // Save the user session to a file to maintain the user's credentials in the next session
-            save_user_session(emailAddress, emailPassword, accountType, mailServerURL);
+            save_user_session(emailAddress, emailPassword, accountType, mailServer);
         }
+
+        // Prompt the user to enter the email ID
+        printf("Enter the email ID: ");
+        scanf("%9s", &emailID);
+
+        combine_url(mailServerURL, accountType, mailServer, emailID);
+
+        printf("URL: %s\n", mailServerURL);
 
         /*
          * Initialize the CURL object with the necessary options:

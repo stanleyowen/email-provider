@@ -29,7 +29,16 @@ void authenticate_user_input(char *emailAddress, char *emailPassword, char *acco
  * url: The combined account type and mail server to use for authentication in the format accountType://mailServer
  * Example: pop3://mail.ntust.edu.tw
  */
-void combine_url(char *mailServerURL, char *accountType, char *mailServer)
+void combine_url(char *mailServerURL, char *accountType, char *mailServer, const char *emailID)
 {
-    sprintf(mailServerURL, "%s://%s/INBOX/;UID=1", accountType, mailServer);
+    if (emailID == NULL)
+        sprintf(mailServerURL, "%s://%s", accountType, mailServer);
+    else
+    {
+        // Check if the account type is SMTP
+        if (strcmp(accountType, "pop3s") == 0)
+            sprintf(mailServerURL, "%s://%s/%s", accountType, mailServer, emailID);
+        else
+            sprintf(mailServerURL, "%s://%s/INBOX/;UID=%s", accountType, mailServer, emailID);
+    }
 }
