@@ -1,7 +1,10 @@
 // Include the necessary headers
 #include <stdio.h>
 #include <string.h>
+#include <curl/curl.h>
+
 #include "auth.h"
+#include "session.h"
 
 /*
  * emailAddress: The email address to use for authentication (https://www.rfc-editor.org/errata/eid1690)
@@ -41,4 +44,47 @@ void combine_url(char *mailServerURL, char *accountType, char *mailServer, const
         else
             sprintf(mailServerURL, "%s://%s/INBOX/;UID=%s", accountType, mailServer, emailID);
     }
+}
+
+void login(CURL *curl, const char *sessionFileName, char *emailAddress, char *emailPassword, char *mailServerURL)
+{
+    // Declare necessary local variables and return it to the main function using pointers
+    char accountType[5], mailServer[255];
+
+    FILE *session_file = fopen(sessionFileName, "r");
+
+    if (session_file)
+    {
+        // Read the user session from the file
+        read_user_session(sessionFileName, emailAddress, emailPassword, accountType, mailServer);
+        fclose(session_file);
+    }
+    else
+    {
+        // If the session file does not exist, authenticate the user input
+        authenticate_user_input(emailAddress, emailPassword, accountType, mailServer);
+
+        // Combine the account type and mail server to form the mail server URL
+        combine_url(mailServerURL, accountType, mailServer, NULL);
+
+        // Save the user session to a file to maintain the user's credentials in the next session
+        save_user_session(sessionFileName, emailAddress, emailPassword, accountType, mailServer);
+    }
+
+    // Combine the account type and mail server to form the mail server URL
+    combine_url(mailServerURL, accountType, mailServer, NULL);
+
+    // Initialize the CURL object with the necessary options
+    curl_easy_setopt(curl, CURLOPT_USERNAME, emailAddress);
+    curl_easy_setopt(curl, CURLOPT_PASSWORD, emailPassword);
+    curl_easy_setopt(curl, CURLOPT_URL, mailServerURL);
+
+    // Perform the login operation
+    CURLcode res = curl_easy_perform(curl);
+
+    // Check for errors
+    if (res != CURLE_OK)
+        fprintf(stderr, "Failed to login: %s\n", curl_easy_strerror(res));
+    else
+        printf("Login successful.\n");
 }
