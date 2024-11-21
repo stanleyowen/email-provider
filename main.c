@@ -42,7 +42,7 @@ int main(void)
         if (login(curl, sessionFileName, mailServerURL, emailAddress, emailPassword, NULL))
         {
             // Print the layout of the email client
-            layout(&continueSession);
+            layout(curl, &continueSession, outputFileName, mailServerURL);
         }
 
     } while (continueSession != 0);
