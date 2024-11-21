@@ -1,9 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <curl/curl.h>
-#include <libgen.h>
-#include <ctype.h>
 
 #include "auth.h"
 #include "readEmail.h"
@@ -60,8 +57,7 @@ void readEmailByID(CURL *curl, const char *outputFileName, char *mailServerURL)
     }
     else
     {
-        printf("Email retrieved successfully!");
-        // printf("Email retrieved successfully! Content saved to %s\n", outputFileName);
+        printf("Email retrieved successfully!\n");
     }
 
     fclose(output_file);

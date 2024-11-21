@@ -39,7 +39,7 @@ void combine_url(char *mailServerURL, char *accountType, char *mailServer, char 
     else if (accountType && mailServer && emailID)
     {
         // Check if the account type is SMTP
-        if (strcmp(accountType, "pop3s") == 0)
+        if (strcmp(accountType, "pop3") == 0)
             sprintf(mailServerURL, "%s://%s/%s", accountType, mailServer, emailID);
         else
             sprintf(mailServerURL, "%s://%s/INBOX/;UID=%s", accountType, mailServer, emailID);

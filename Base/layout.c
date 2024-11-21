@@ -4,6 +4,7 @@
 
 #include "layout.h"
 #include "../Operation/readEmail.h"
+#include "../Operation/deleteEmail.h"
 
 // Print the layout of the email client
 void layout(CURL *curl, _Bool *continueSession, const char *outputFileName, char *mailServerURL)
@@ -33,7 +34,7 @@ void layout(CURL *curl, _Bool *continueSession, const char *outputFileName, char
         }
         else if (userChoice == 3)
         {
-            printf("Deleting Email...\n");
+            deleteEmailByID(curl, mailServerURL);
         }
         else if (userChoice == 4)
         {
