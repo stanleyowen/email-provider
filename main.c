@@ -9,8 +9,9 @@
 // Callback function to write the response data
 static size_t write_callback(void *ptr, size_t size, size_t nmemb, void *userdata)
 {
+    FILE *file = (FILE *)userdata;
     size_t total_size = size * nmemb;
-    fwrite(ptr, size, nmemb, stdout);
+    fwrite(ptr, size, nmemb, file);
     return total_size;
 }
 
@@ -57,7 +58,14 @@ int main(void)
 
         combine_url(mailServerURL, accountType, mailServer, emailID);
 
-        printf("URL: %s\n", mailServerURL);
+        // Open the output file to write the email content
+        FILE *output_file = fopen(outputFileName, "w");
+        if (!output_file)
+        {
+            perror("Failed to open output file");
+            curl_easy_cleanup(curl);
+            return 1;
+        }
 
         /*
          * Initialize the CURL object with the necessary options:
@@ -69,6 +77,7 @@ int main(void)
         curl_easy_setopt(curl, CURLOPT_PASSWORD, emailPassword);
         curl_easy_setopt(curl, CURLOPT_URL, mailServerURL);
         curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
+        curl_easy_setopt(curl, CURLOPT_WRITEDATA, output_file);
 
         // Enable verbose mode to display the authentication process
         curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
@@ -81,11 +90,24 @@ int main(void)
         }
         else
         {
-            printf("Login successful!\n");
+            printf("Email retrieved successfully!");
+            // printf("Email retrieved successfully! Content saved to %s\n", outputFileName);
         }
 
         // Cleanup the CURL object
         curl_easy_cleanup(curl);
+        fclose(output_file);
+
+// Open the output file to display the email content with the default browser
+#ifdef _WIN32
+        system("start output.html");
+#elif __linux__
+        system("xdg-open output.html");
+#elif __APPLE__
+        system("open output.html");
+#endif
+
+        return 0;
     }
     else
     {
