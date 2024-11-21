@@ -1,6 +1,8 @@
 // Include the necessary headers
 #include <stdio.h>
+#include <stdlib.h>
 #include <curl/curl.h>
+
 #include "Auth/auth.h"
 #include "Auth/session.h"
 
@@ -16,7 +18,10 @@ int main(void)
 {
     // Declare the necessary variables
     char emailAddress[254], emailPassword[128], accountType[5], mailServer[255], mailServerURL[500];
-    char emailID[9];
+    char emailID[10];
+
+    const char *sessionFileName = "session.txt";
+    const char *outputFileName = "output.html";
 
     CURL *curl;
     CURLcode res;
@@ -26,10 +31,13 @@ int main(void)
     if (curl)
     {
         // Check if the session file exists
-        if (fopen("session.txt", "r"))
+        FILE *session_file = fopen(sessionFileName, "r");
+
+        if (session_file)
         {
             // Read the user session from the file
-            read_user_session(emailAddress, emailPassword, accountType, mailServer);
+            read_user_session(sessionFileName, emailAddress, emailPassword, accountType, mailServer);
+            fclose(session_file);
         }
         else
         {
@@ -40,7 +48,7 @@ int main(void)
             combine_url(mailServerURL, accountType, mailServer, NULL);
 
             // Save the user session to a file to maintain the user's credentials in the next session
-            save_user_session(emailAddress, emailPassword, accountType, mailServer);
+            save_user_session(sessionFileName, emailAddress, emailPassword, accountType, mailServer);
         }
 
         // Prompt the user to enter the email ID
