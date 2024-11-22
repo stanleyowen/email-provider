@@ -31,7 +31,7 @@ void base(_Bool *continueSession, const char *outputFileName, char *mailServerUR
         }
         else if (userChoice == 2)
         {
-            readEmailByID(outputFileName, mailServerURL);
+            readEmailByID(outputFileName, mailServerURL, emailAddress, emailPassword);
         }
         else if (userChoice == 3)
         {

@@ -15,14 +15,7 @@ static size_t write_callback(void *ptr, size_t size, size_t nmemb, void *userdat
     return total_size;
 }
 
-// size_t write_callback(void *ptr, size_t size, size_t nmemb, void *userdata)
-// {
-//     size_t total_size = size * nmemb;
-//     fwrite(ptr, size, nmemb, stdout); // Write directly to stdout
-//     return total_size;
-// }
-
-void readEmailByID(const char *outputFileName, char *mailServerURL)
+void readEmailByID(const char *outputFileName, char *mailServerURL, char *emailAddress, char *emailPassword)
 {
     CURL *curl = curl_easy_init();
     char emailID[10];
@@ -31,9 +24,16 @@ void readEmailByID(const char *outputFileName, char *mailServerURL)
     printf("Enter the email ID: ");
     scanf("%9s", &emailID);
 
-    // Construct the URL to fetch the email
+    // Modify the URL from imaps to pop3s
     char url[256];
-    snprintf(url, sizeof(url), "%s%s", mailServerURL, emailID);
+    strncpy(url, mailServerURL, sizeof(url) - 1);
+    url[sizeof(url) - 1] = '\0'; // Ensure null-termination
+
+    // Replace the first five characters of the mailServerURL to "imaps"
+    strncpy(url, "imaps", 5);
+
+    // Append the email ID to the URL
+    strncat(url, emailID, 9);
 
     // Open the output file to write the email content
     FILE *output_file = fopen(outputFileName, "wb");
@@ -44,6 +44,9 @@ void readEmailByID(const char *outputFileName, char *mailServerURL)
     }
 
     printf("Mail Server URL: %s\n", url);
+
+    curl_easy_setopt(curl, CURLOPT_USERNAME, emailAddress);
+    curl_easy_setopt(curl, CURLOPT_PASSWORD, emailPassword);
     curl_easy_setopt(curl, CURLOPT_URL, url);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, output_file);
@@ -76,28 +79,33 @@ void readEmailByID(const char *outputFileName, char *mailServerURL)
 #endif
 }
 
+size_t write_callback_inbox(void *ptr, size_t size, size_t nmemb, void *userdata)
+{
+    // Append the received data to the buffer
+    strncat((char *)userdata, (char *)ptr, size * nmemb);
+    return size * nmemb;
+}
+
 void readInbox(char *mailServerURL, char *emailAddress, char *emailPassword)
 {
     CURL *curl = curl_easy_init();
+    char response[1024] = {0}; // Buffer to store the response
 
-    // Modify the URL from imaps to pop3s
+    // Modify the URL from pop3s to imaps
     char url[256];
     strncpy(url, mailServerURL, sizeof(url) - 1);
     url[sizeof(url) - 1] = '\0'; // Ensure null-termination
 
     // Replace the first five characters of the mailServerURL from "pop3s" to "imaps"
-    strncpy(url, "pop3s", 5);
-
-    // combine_url(mailServerURL, "pop3s", "pop.gmail.com/INBOX", NULL);
-    printf("Mail Server URL: %s\n", url);
+    strncpy(url, "imaps", 5);
 
     curl_easy_setopt(curl, CURLOPT_USERNAME, emailAddress);
     curl_easy_setopt(curl, CURLOPT_PASSWORD, emailPassword);
     curl_easy_setopt(curl, CURLOPT_URL, url);
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
+    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "STATUS INBOX (MESSAGES)");
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback_inbox);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, response);
 
-    // Enable verbose mode to display the authentication process
-    curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
     CURLcode res = curl_easy_perform(curl);
 
     // Check if the authentication was successful
@@ -107,7 +115,19 @@ void readInbox(char *mailServerURL, char *emailAddress, char *emailPassword)
     }
     else
     {
-        printf("Email retrieved successfully!\n");
+        printf("Response: %s\n", response);
+
+        // Parse the response to extract the number of messages
+        char *messages_str = strstr(response, "MESSAGES");
+        if (messages_str)
+        {
+            int num_messages;
+            printf("Number of emails in inbox: %d\n", num_messages);
+        }
+        else
+        {
+            printf("Failed to retrieve the number of messages.\n");
+        }
     }
 
     curl_easy_cleanup(curl);
