@@ -77,6 +77,10 @@ int login(const char *sessionFileName, char *mailServerURL, char *emailAddress, 
     // Combine the account type and mail server to form the mail server URL
     combine_url(mailServerURL, accountType, mailServer, NULL);
 
+    // Disable SSL verification to avoid certificate-related issues
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+
     // Initialize the CURL object with the necessary options
     curl_easy_setopt(curl, CURLOPT_USERNAME, emailAddress);
     curl_easy_setopt(curl, CURLOPT_PASSWORD, emailPassword);
