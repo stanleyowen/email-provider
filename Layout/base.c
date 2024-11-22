@@ -47,7 +47,7 @@ void base(CURL *curl, _Bool *continueSession, const char *outputFileName, char *
 
             composeEmail(timestamp, destinationEmail, emailSubject, emailContent);
 
-            sendEmail(curl, timestamp, destinationEmail, emailSubject, emailContent);
+            sendEmail(curl, mailServerURL, timestamp, destinationEmail, emailSubject, emailContent);
         }
         else if (userChoice == 5)
         {
