@@ -39,6 +39,7 @@ static size_t payload_source(char *ptr, size_t size, size_t nmemb, void *userp)
 
     return 0;
 }
+
 void sendEmail(CURL *curl, char *mailServerURL, char *timestamp, char *destinationEmail, char *emailSubject, char *emailContent)
 {
     struct curl_slist *recipients = NULL;
@@ -57,13 +58,13 @@ void sendEmail(CURL *curl, char *mailServerURL, char *timestamp, char *destinati
     snprintf(payload_text, sizeof(payload_text),
              "To: %s\r\n"
              "From: <B11315015@mail.ntust.edu.tw>\r\n"
-             "Subject: SMTP example message\r\n"
+             "Subject: %s\r\n"
              "\r\n" /* empty line to divide headers from body, see RFC 5322 */
-             "The body of the message starts here.\r\n"
-             "\r\n"
-             "It could be a lot of lines, could be MIME encoded, whatever.\r\n"
-             "Check RFC 5322.\r\n",
-             destinationEmail);
+             "%s\r\n",
+             destinationEmail, emailSubject, emailContent);
+
+    // debug the payload
+    printf("%s\n", payload_text);
 
     recipients = curl_slist_append(recipients, destinationEmail);
     curl_easy_setopt(curl, CURLOPT_MAIL_RCPT, recipients);

@@ -45,7 +45,7 @@ void base(CURL *curl, _Bool *continueSession, const char *outputFileName, char *
             char emailSubject[100];
             char emailContent[1000];
 
-            composeEmail(timestamp, destinationEmail, emailSubject, emailContent);
+            composeEmail(destinationEmail, emailSubject, emailContent);
 
             sendEmail(curl, mailServerURL, timestamp, destinationEmail, emailSubject, emailContent);
         }
