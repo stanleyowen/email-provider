@@ -54,7 +54,7 @@ int login(const char *sessionFileName, char *mailServerURL, char *emailAddress, 
     FILE *session_file = fopen(sessionFileName, "r");
 
     // Declare necessary local variables and return it to the main function using pointers
-    char accountType[5] = "imaps", mailServer[255];
+    char accountType[] = "imaps", mailServer[255];
 
     if (session_file)
     {
