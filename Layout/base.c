@@ -2,12 +2,14 @@
 #include <stdio.h>
 #include <curl/curl.h>
 
-#include "layout.h"
+#include "base.h"
+#include "composeEmail.h"
 #include "../Operation/readEmail.h"
 #include "../Operation/deleteEmail.h"
+#include "../Operation/sendEmail.h"
 
 // Print the layout of the email client
-void layout(CURL *curl, _Bool *continueSession, const char *outputFileName, char *mailServerURL)
+void base(CURL *curl, _Bool *continueSession, const char *outputFileName, char *mailServerURL)
 {
     int userChoice;
 
@@ -38,7 +40,14 @@ void layout(CURL *curl, _Bool *continueSession, const char *outputFileName, char
         }
         else if (userChoice == 4)
         {
-            printf("Composing Email...\n");
+            char timestamp[100];
+            char destinationEmail[254];
+            char emailSubject[100];
+            char emailContent[1000];
+
+            composeEmail(timestamp, destinationEmail, emailSubject, emailContent);
+
+            sendEmail(curl, timestamp, destinationEmail, emailSubject, emailContent);
         }
         else if (userChoice == 5)
         {

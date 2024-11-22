@@ -5,7 +5,7 @@
 
 #include "Auth/auth.h"
 #include "Auth/session.h"
-#include "Base/layout.h"
+#include "Layout/base.h"
 
 // // Callback function to write the response data
 // static size_t write_callback(void *ptr, size_t size, size_t nmemb, void *userdata)
@@ -42,7 +42,7 @@ int main(void)
         if (login(curl, sessionFileName, mailServerURL, emailAddress, emailPassword, NULL))
         {
             // Print the layout of the email client
-            layout(curl, &continueSession, outputFileName, mailServerURL);
+            base(curl, &continueSession, outputFileName, mailServerURL);
         }
 
     } while (continueSession != 0);

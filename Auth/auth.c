@@ -80,6 +80,9 @@ int login(CURL *curl, const char *sessionFileName, char *mailServerURL, char *em
     curl_easy_setopt(curl, CURLOPT_PASSWORD, emailPassword);
     curl_easy_setopt(curl, CURLOPT_URL, mailServerURL);
 
+    // Set the sender's email address for sending emails
+    curl_easy_setopt(curl, CURLOPT_MAIL_FROM, emailAddress);
+
     // Perform the login operation
     CURLcode res = curl_easy_perform(curl);
 
