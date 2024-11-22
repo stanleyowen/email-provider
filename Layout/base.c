@@ -1,5 +1,6 @@
 // Include the necessary headers
 #include <stdio.h>
+#include <curl/curl.h>
 
 #include "base.h"
 #include "composeEmail.h"
@@ -35,18 +36,17 @@ void base(_Bool *continueSession, const char *outputFileName, char *mailServerUR
         }
         else if (userChoice == 3)
         {
-            deleteEmailByID(mailServerURL);
+            deleteEmailByID(mailServerURL, emailAddress, emailPassword);
         }
         else if (userChoice == 4)
         {
-            char timestamp[100];
             char destinationEmail[254];
             char emailSubject[100];
             char emailContent[1000];
 
             composeEmail(destinationEmail, emailSubject, emailContent);
 
-            sendEmail(mailServerURL, timestamp, destinationEmail, emailSubject, emailContent);
+            sendEmail(mailServerURL, emailAddress, emailPassword, destinationEmail, emailSubject, emailContent);
         }
         else if (userChoice == 5)
         {
@@ -59,6 +59,8 @@ void base(_Bool *continueSession, const char *outputFileName, char *mailServerUR
             printf("Invalid choice. Please try again.\n");
         }
     } while (continueSession != 0);
+
+    curl_global_cleanup();
 
     printf("\n");
 }

@@ -5,7 +5,7 @@
 #include "auth.h"
 #include "deleteEmail.h"
 
-void deleteEmailByID(const char *mailServerURL)
+void deleteEmailByID(const char *mailServerURL, char *emailAddress, char *emailPassword)
 {
     CURL *curl = curl_easy_init();
     char emailID[10];
@@ -20,6 +20,8 @@ void deleteEmailByID(const char *mailServerURL)
     printf("Mail Server URL: %s\n", url);
 
     // Set CURL options
+    curl_easy_setopt(curl, CURLOPT_USERNAME, emailAddress);
+    curl_easy_setopt(curl, CURLOPT_PASSWORD, emailPassword);
     curl_easy_setopt(curl, CURLOPT_URL, url);
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "DELE");
     curl_easy_setopt(curl, CURLOPT_NOBODY, 1L);

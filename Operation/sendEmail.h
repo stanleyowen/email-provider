@@ -4,6 +4,6 @@
 
 #include <curl/curl.h>
 
-void sendEmail(char *mailServerURL, char *timestamp, char *destinationEmail, char *emailSubject, char *emailContent);
+void sendEmail(char *mailServerURL, char *emailAddress, char *emailPassword, char *destinationEmail, char *emailSubject, char *emailContent);
 
 #endif // SEND_EMAIL_H

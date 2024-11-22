@@ -3,6 +3,6 @@
 
 #include <curl/curl.h>
 
-void deleteEmailByID(const char *mailServerURL);
+void deleteEmailByID(const char *mailServerURL, char *emailAddress, char *emailPassword);
 
 #endif // DELETE_EMAIL_H

@@ -5,6 +5,7 @@
 
 #include "auth.h"
 #include "deleteEmail.h"
+#include "sendEmail.h"
 
 static char payload_text[2024];
 
@@ -40,7 +41,7 @@ static size_t payload_source(char *ptr, size_t size, size_t nmemb, void *userp)
     return 0;
 }
 
-void sendEmail(char *mailServerURL, char *timestamp, char *destinationEmail, char *emailSubject, char *emailContent)
+void sendEmail(char *mailServerURL, char *emailAddress, char *emailPassword, char *destinationEmail, char *emailSubject, char *emailContent)
 {
     CURL *curl = curl_easy_init();
 
