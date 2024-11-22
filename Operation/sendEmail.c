@@ -40,8 +40,10 @@ static size_t payload_source(char *ptr, size_t size, size_t nmemb, void *userp)
     return 0;
 }
 
-void sendEmail(CURL *curl, char *mailServerURL, char *timestamp, char *destinationEmail, char *emailSubject, char *emailContent)
+void sendEmail(char *mailServerURL, char *timestamp, char *destinationEmail, char *emailSubject, char *emailContent)
 {
+    CURL *curl = curl_easy_init();
+
     struct curl_slist *recipients = NULL;
     struct upload_status upload_ctx = {0};
 
@@ -88,4 +90,5 @@ void sendEmail(CURL *curl, char *mailServerURL, char *timestamp, char *destinati
         curl_slist_free_all(recipients);
         printf("Email sent successfully!\n");
     }
+    curl_easy_cleanup(curl);
 }

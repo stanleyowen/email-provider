@@ -1,6 +1,5 @@
 // Include the necessary headers
 #include <stdio.h>
-#include <curl/curl.h>
 
 #include "base.h"
 #include "composeEmail.h"
@@ -9,7 +8,7 @@
 #include "../Operation/sendEmail.h"
 
 // Print the layout of the email client
-void base(CURL *curl, _Bool *continueSession, const char *outputFileName, char *mailServerURL)
+void base(_Bool *continueSession, const char *outputFileName, char *mailServerURL, char *emailAddress, char *emailPassword)
 {
     int userChoice;
 
@@ -28,15 +27,15 @@ void base(CURL *curl, _Bool *continueSession, const char *outputFileName, char *
 
         if (userChoice == 1)
         {
-            readInbox(curl, mailServerURL);
+            readInbox(mailServerURL, emailAddress, emailPassword);
         }
         else if (userChoice == 2)
         {
-            readEmailByID(curl, outputFileName, mailServerURL);
+            readEmailByID(outputFileName, mailServerURL);
         }
         else if (userChoice == 3)
         {
-            deleteEmailByID(curl, mailServerURL);
+            deleteEmailByID(mailServerURL);
         }
         else if (userChoice == 4)
         {
@@ -47,7 +46,7 @@ void base(CURL *curl, _Bool *continueSession, const char *outputFileName, char *
 
             composeEmail(destinationEmail, emailSubject, emailContent);
 
-            sendEmail(curl, mailServerURL, timestamp, destinationEmail, emailSubject, emailContent);
+            sendEmail(mailServerURL, timestamp, destinationEmail, emailSubject, emailContent);
         }
         else if (userChoice == 5)
         {

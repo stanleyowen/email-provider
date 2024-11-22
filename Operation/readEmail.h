@@ -3,7 +3,7 @@
 
 #include <curl/curl.h>
 
-void readEmailByID(CURL *curl, const char *outputFileName, char *mailServerURL);
-void readInbox(CURL *curl, char *mailServerURL);
+void readEmailByID(const char *outputFileName, char *mailServerURL);
+void readInbox(char *mailServerURL, char *emailAddress, char *emailPassword);
 
 #endif // READ_EMAIL_H

@@ -46,13 +46,15 @@ void combine_url(char *mailServerURL, char *accountType, char *mailServer, char 
     }
 }
 
-int login(CURL *curl, const char *sessionFileName, char *mailServerURL, char *emailAddress, char *emailPassword, char *null)
+int login(const char *sessionFileName, char *mailServerURL, char *emailAddress, char *emailPassword, char *null)
 {
-
-    // Declare necessary local variables and return it to the main function using pointers
-    char accountType[5] = "pop3s", mailServer[255];
+    CURL *curl = curl_easy_init();
+    CURLcode res;
 
     FILE *session_file = fopen(sessionFileName, "r");
+
+    // Declare necessary local variables and return it to the main function using pointers
+    char accountType[5] = "imaps", mailServer[255];
 
     if (session_file)
     {
@@ -79,22 +81,22 @@ int login(CURL *curl, const char *sessionFileName, char *mailServerURL, char *em
     curl_easy_setopt(curl, CURLOPT_USERNAME, emailAddress);
     curl_easy_setopt(curl, CURLOPT_PASSWORD, emailPassword);
     curl_easy_setopt(curl, CURLOPT_URL, mailServerURL);
-
-    // Set the sender's email address for sending emails
-    curl_easy_setopt(curl, CURLOPT_MAIL_FROM, emailAddress);
+    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "NOOP");
 
     // Perform the login operation
-    CURLcode res = curl_easy_perform(curl);
+    res = curl_easy_perform(curl);
 
-    // Check for errors
+    // Check if the authentication was successful
     if (res != CURLE_OK)
     {
         fprintf(stderr, "Failed to login: %s\n", curl_easy_strerror(res));
+        curl_easy_cleanup(curl);
         return 0;
     }
     else
     {
         printf("Login successful.\n");
+        curl_easy_cleanup(curl);
         return 1;
     }
 }

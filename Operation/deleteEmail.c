@@ -5,8 +5,9 @@
 #include "auth.h"
 #include "deleteEmail.h"
 
-void deleteEmailByID(CURL *curl, const char *mailServerURL)
+void deleteEmailByID(const char *mailServerURL)
 {
+    CURL *curl = curl_easy_init();
     char emailID[10];
 
     // Prompt the user to enter the email ID
@@ -33,4 +34,6 @@ void deleteEmailByID(CURL *curl, const char *mailServerURL)
     {
         printf("Email with ID %s deleted successfully.\n", emailID);
     }
+
+    curl_easy_cleanup(curl);
 }

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <curl/curl.h>
 
 #include "auth.h"
@@ -21,8 +22,9 @@ static size_t write_callback(void *ptr, size_t size, size_t nmemb, void *userdat
 //     return total_size;
 // }
 
-void readEmailByID(CURL *curl, const char *outputFileName, char *mailServerURL)
+void readEmailByID(const char *outputFileName, char *mailServerURL)
 {
+    CURL *curl = curl_easy_init();
     char emailID[10];
 
     // Prompt the user to enter the email ID
@@ -62,6 +64,8 @@ void readEmailByID(CURL *curl, const char *outputFileName, char *mailServerURL)
 
     fclose(output_file);
 
+    curl_easy_cleanup(curl);
+
 // Open the output file to display the email content with the default browser
 #ifdef _WIN32
     system("start output.html");
@@ -72,13 +76,24 @@ void readEmailByID(CURL *curl, const char *outputFileName, char *mailServerURL)
 #endif
 }
 
-void readInbox(CURL *curl, char *mailServerURL)
+void readInbox(char *mailServerURL, char *emailAddress, char *emailPassword)
 {
-    // combine_url(mailServerURL, "pop3s", "pop.gmail.com/INBOX", NULL);
-    printf("Mail Server URL: %s\n", mailServerURL);
+    CURL *curl = curl_easy_init();
 
-    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "LIST");
-    curl_easy_setopt(curl, CURLOPT_URL, mailServerURL);
+    // Modify the URL from imaps to pop3s
+    char url[256];
+    strncpy(url, mailServerURL, sizeof(url) - 1);
+    url[sizeof(url) - 1] = '\0'; // Ensure null-termination
+
+    // Replace the first five characters of the mailServerURL from "pop3s" to "imaps"
+    strncpy(url, "pop3s", 5);
+
+    // combine_url(mailServerURL, "pop3s", "pop.gmail.com/INBOX", NULL);
+    printf("Mail Server URL: %s\n", url);
+
+    curl_easy_setopt(curl, CURLOPT_USERNAME, emailAddress);
+    curl_easy_setopt(curl, CURLOPT_PASSWORD, emailPassword);
+    curl_easy_setopt(curl, CURLOPT_URL, url);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
 
     // Enable verbose mode to display the authentication process
@@ -94,4 +109,6 @@ void readInbox(CURL *curl, char *mailServerURL)
     {
         printf("Email retrieved successfully!\n");
     }
+
+    curl_easy_cleanup(curl);
 }

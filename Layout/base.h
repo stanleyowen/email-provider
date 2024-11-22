@@ -3,6 +3,6 @@
 
 #include <curl/curl.h>
 
-void base(CURL *curl, _Bool *continueSession, const char *outputFileName, char *mailServerURL);
+void base(_Bool *continueSession, const char *outputFileName, char *mailServerURL, char *emailAddress, char *emailPassword);
 
 #endif // LAYOUT_H
