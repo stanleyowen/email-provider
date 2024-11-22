@@ -22,18 +22,11 @@ void readEmailByID(const char *outputFileName, char *mailServerURL, char *emailA
 
     // Prompt the user to enter the email ID
     printf("Enter the email ID: ");
-    scanf("%9s", &emailID);
+    scanf("%9s", emailID);
 
-    // Modify the URL from imaps to pop3s
+    // Modify the URL to point to the inbox
     char url[256];
-    strncpy(url, mailServerURL, sizeof(url) - 1);
-    url[sizeof(url) - 1] = '\0'; // Ensure null-termination
-
-    // Replace the first five characters of the mailServerURL to "imaps"
-    strncpy(url, "imaps", 5);
-
-    // Append the email ID to the URL
-    strncat(url, emailID, 9);
+    snprintf(url, sizeof(url), "%sINBOX/;UID=%s", mailServerURL, emailID);
 
     // Open the output file to write the email content
     FILE *output_file = fopen(outputFileName, "wb");
@@ -41,6 +34,7 @@ void readEmailByID(const char *outputFileName, char *mailServerURL, char *emailA
     {
         perror("Failed to open output file");
         curl_easy_cleanup(curl);
+        return;
     }
 
     printf("Mail Server URL: %s\n", url);
@@ -48,14 +42,15 @@ void readEmailByID(const char *outputFileName, char *mailServerURL, char *emailA
     curl_easy_setopt(curl, CURLOPT_USERNAME, emailAddress);
     curl_easy_setopt(curl, CURLOPT_PASSWORD, emailPassword);
     curl_easy_setopt(curl, CURLOPT_URL, url);
+
+    // Set the callback function to write the response data
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, output_file);
 
-    // Enable verbose mode to display the authentication process
-    curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
+    // Perform the fetch
     CURLcode res = curl_easy_perform(curl);
 
-    // Check if the authentication was successful
+    // Check if the fetch was successful
     if (res != CURLE_OK)
     {
         fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
@@ -66,10 +61,9 @@ void readEmailByID(const char *outputFileName, char *mailServerURL, char *emailA
     }
 
     fclose(output_file);
-
     curl_easy_cleanup(curl);
 
-// Open the output file to display the email content with the default browser
+    // Open the output file to display the email content with the default browser
 #ifdef _WIN32
     system("start output.html");
 #elif __linux__
@@ -115,13 +109,12 @@ void readInbox(char *mailServerURL, char *emailAddress, char *emailPassword)
     }
     else
     {
-        printf("Response: %s\n", response);
-
         // Parse the response to extract the number of messages
         char *messages_str = strstr(response, "MESSAGES");
         if (messages_str)
         {
             int num_messages;
+            sscanf(messages_str, "MESSAGES %d", &num_messages);
             printf("Number of emails in inbox: %d\n", num_messages);
         }
         else
