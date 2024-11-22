@@ -69,6 +69,9 @@ void sendEmail(char *mailServerURL, char *emailAddress, char *emailPassword, cha
     // debug the payload
     printf("%s\n", payload_text);
 
+    curl_easy_setopt(curl, CURLOPT_USERNAME, emailAddress);
+    curl_easy_setopt(curl, CURLOPT_PASSWORD, emailPassword);
+    curl_easy_setopt(curl, CURLOPT_MAIL_FROM, emailAddress);
     recipients = curl_slist_append(recipients, destinationEmail);
     curl_easy_setopt(curl, CURLOPT_MAIL_RCPT, recipients);
     curl_easy_setopt(curl, CURLOPT_URL, url);
