@@ -25,17 +25,19 @@ For windows users, it is recommended to have the C++ compiler with the choco pac
    ```bash
    choco install make
    ```
-4. Download and install the cURL library on https://curl.se/download.html
-5. Extract the downloaded file and copy the `include` and `lib` folders to the `C:\` directory.
-6. After installing the libraries, you can compile the project using the following command:
+4. Download and install the cURL library on https://curl.se/windows/
+5. Extract the downloaded file and rename the folder from `curl-xxx-xxx-mingw` into `curl`.
+6. Copy the folder to the `C:\` directory (make sure that the `C:/curl` directory exists).
+7. Add the `C:/curl/bin`, `C:/curl/include`, and `C:/curl/lib` directories to the system environment variables.
+8. To compile the project, use the following command:
    ```bash
    make
    ```
-7. To clean the project, use the following command:
-   ```bash
-    make clean
-   ```
-8. To run the project, use the following command:
+9. To run the project, use the following command:
    ```bash
    main.exe
    ```
+10. To clean the project, use the following command:
+    ```bash
+    make clean
+    ```
