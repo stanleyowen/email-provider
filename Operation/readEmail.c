@@ -39,6 +39,10 @@ void readEmailByID(const char *outputFileName, char *mailServerURL, char *emailA
 
     printf("Mail Server URL: %s\n", url);
 
+    // Disable SSL verification to avoid certificate-related issues
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+
     curl_easy_setopt(curl, CURLOPT_USERNAME, emailAddress);
     curl_easy_setopt(curl, CURLOPT_PASSWORD, emailPassword);
     curl_easy_setopt(curl, CURLOPT_URL, url);
@@ -92,6 +96,10 @@ void readInbox(char *mailServerURL, char *emailAddress, char *emailPassword)
 
     // Replace the first five characters of the mailServerURL from "pop3s" to "imaps"
     strncpy(url, "imaps", 5);
+
+    // Disable SSL verification to avoid certificate-related issues
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
 
     curl_easy_setopt(curl, CURLOPT_USERNAME, emailAddress);
     curl_easy_setopt(curl, CURLOPT_PASSWORD, emailPassword);

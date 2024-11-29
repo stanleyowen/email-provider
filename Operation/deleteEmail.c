@@ -19,6 +19,10 @@ void deleteEmailByID(const char *mailServerURL, char *emailAddress, char *emailP
     snprintf(url, sizeof(url), "%s%s", mailServerURL, emailID);
     printf("Mail Server URL: %s\n", url);
 
+    // Disable SSL verification to avoid certificate-related issues
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+
     // Set CURL options
     curl_easy_setopt(curl, CURLOPT_USERNAME, emailAddress);
     curl_easy_setopt(curl, CURLOPT_PASSWORD, emailPassword);

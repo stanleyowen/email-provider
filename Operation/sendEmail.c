@@ -69,6 +69,10 @@ void sendEmail(char *mailServerURL, char *emailAddress, char *emailPassword, cha
     // debug the payload
     printf("%s\n", payload_text);
 
+    // Disable SSL verification to avoid certificate-related issues
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+    curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+
     curl_easy_setopt(curl, CURLOPT_USERNAME, emailAddress);
     curl_easy_setopt(curl, CURLOPT_PASSWORD, emailPassword);
     curl_easy_setopt(curl, CURLOPT_MAIL_FROM, emailAddress);
