@@ -23,7 +23,7 @@ int main(void)
         if (login(sessionFileName, mailServerURL, emailAddress, emailPassword, NULL))
         {
             // Print the layout of the email client
-            base(&continueSession, outputFileName, mailServerURL, emailAddress, emailPassword);
+            base(&continueSession, outputFileName, sessionFileName, mailServerURL, emailAddress, emailPassword);
         }
 
     } while (continueSession != 0);

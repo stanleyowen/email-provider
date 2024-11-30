@@ -24,3 +24,22 @@ void read_user_session(const char *filename, char *emailAddress, char *emailPass
     fscanf(file, "%s\n%s\n%s\n", emailAddress, emailPassword, mailServer);
     fclose(file);
 }
+
+// Delete the user session file and reset the credentials
+void delete_user_session(const char *sessionFileName, char *mailServerURL, char *emailAddress, char *emailPassword)
+{
+    // Reset the email address, password, and mail server URL
+    *mailServerURL = ' ';
+    *emailAddress = ' ';
+    *emailPassword = ' ';
+
+    // Delete the session file
+    if (remove("session.txt") != 0)
+    {
+        perror("Failed to delete the session file, please try again.");
+    }
+    else
+    {
+        printf("Logged out successfully.\n");
+    }
+}

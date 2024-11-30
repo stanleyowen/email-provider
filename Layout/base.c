@@ -4,12 +4,13 @@
 
 #include "base.h"
 #include "composeEmail.h"
+#include "../Auth/session.h"
 #include "../Operation/readEmail.h"
 #include "../Operation/deleteEmail.h"
 #include "../Operation/sendEmail.h"
 
 // Print the layout of the email client
-void base(_Bool *continueSession, const char *outputFileName, char *mailServerURL, char *emailAddress, char *emailPassword)
+void base(_Bool *continueSession, const char *outputFileName, const char *sessionFileName, char *mailServerURL, char *emailAddress, char *emailPassword)
 {
     int userChoice;
 
@@ -18,7 +19,8 @@ void base(_Bool *continueSession, const char *outputFileName, char *mailServerUR
     printf("2. View Email\n");
     printf("3. Delete Email\n");
     printf("4. Compose Email\n");
-    printf("5. Exit\n");
+    printf("5. Logout\n");
+    printf("6. Exit\n");
 
     // Loop the prompt until the user decides to exit the application
     do
@@ -49,6 +51,10 @@ void base(_Bool *continueSession, const char *outputFileName, char *mailServerUR
             sendEmail(mailServerURL, emailAddress, emailPassword, destinationEmail, emailSubject, emailContent);
         }
         else if (userChoice == 5)
+        {
+            delete_user_session(outputFileName, mailServerURL, emailAddress, emailPassword);
+        }
+        else if (userChoice == 6)
         {
             printf("Exiting application\n");
             *continueSession = 0;
