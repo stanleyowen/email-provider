@@ -6,6 +6,9 @@
 #include "auth.h"
 #include "readEmail.h"
 
+#define MAX_SUBJECTS 10000
+#define MAX_SUBJECT_LENGTH 256
+
 // Callback function to write the response data
 static size_t write_callback(void *ptr, size_t size, size_t nmemb, void *userdata)
 {
@@ -84,25 +87,45 @@ void readEmailByID(const char *outputFileName, char *mailServerURL, char *emailA
 #endif
 }
 
+// Structure to hold the email subjects and count
+// Declare a 2D array to store the email subjects
+typedef struct
+{
+    char subjects[MAX_SUBJECTS][MAX_SUBJECT_LENGTH];
+    int count;
+} SubjectList;
+
 size_t write_callback_inbox(void *ptr, size_t size, size_t nmemb, void *userdata)
 {
-    // Append the received data to the buffer
-    strncat((char *)userdata, (char *)ptr, size * nmemb);
-    return size * nmemb;
+    SubjectList *subject_list = (SubjectList *)userdata;
+    size_t total_size = size * nmemb;
+
+    // Process the received data to extract email subjects
+    char *line = strtok((char *)ptr, "\r\n");
+    while (line != NULL)
+    {
+        if (strncmp(line, "Subject:", 8) == 0)
+        {
+            // Append the email subject to the list
+            strncpy(subject_list->subjects[subject_list->count], line + 9, MAX_SUBJECT_LENGTH - 1);
+            subject_list->subjects[subject_list->count][MAX_SUBJECT_LENGTH - 1] = '\0'; // Ensure null-termination
+            subject_list->count++;
+        }
+        line = strtok(NULL, "\r\n");
+    }
+
+    return total_size;
 }
 
 void readInbox(char *mailServerURL, char *emailAddress, char *emailPassword)
 {
     CURL *curl = curl_easy_init();
-    char response[1024] = {0}; // Buffer to store the response
+    SubjectList subject_list = {.count = 0}; // Initialize the subject list
 
-    // Modify the URL from pop3s to imaps
+    // Modify the URL to point to the inbox
     char url[256];
-    strncpy(url, mailServerURL, sizeof(url) - 1);
-    url[sizeof(url) - 1] = '\0'; // Ensure null-termination
-
-    // Replace the first five characters of the mailServerURL from "pop3s" to "imaps"
-    strncpy(url, "imaps", 5);
+    snprintf(url, sizeof(url), "%sINBOX", mailServerURL);
+    // snprintf(url, sizeof(url), "%sINBOX;MAILINDEX=[1-2];section=header.fields%%20(subject)", mailServerURL);
 
     // Disable SSL verification to avoid certificate-related issues
     curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
@@ -111,9 +134,10 @@ void readInbox(char *mailServerURL, char *emailAddress, char *emailPassword)
     curl_easy_setopt(curl, CURLOPT_USERNAME, emailAddress);
     curl_easy_setopt(curl, CURLOPT_PASSWORD, emailPassword);
     curl_easy_setopt(curl, CURLOPT_URL, url);
-    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "STATUS INBOX (MESSAGES)");
+    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "FETCH 1:* (BODY[HEADER.FIELDS (SUBJECT)])");
+    // curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "STATUS INBOX (MESSAGES)");
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback_inbox);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, response);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &subject_list);
 
     CURLcode res = curl_easy_perform(curl);
 
@@ -124,17 +148,10 @@ void readInbox(char *mailServerURL, char *emailAddress, char *emailPassword)
     }
     else
     {
-        // Parse the response to extract the number of messages
-        char *messages_str = strstr(response, "MESSAGES");
-        if (messages_str)
+        printf("Number of emails in inbox: %d\n", subject_list.count);
+        for (int i = subject_list.count - 1; i >= 0; i--)
         {
-            int num_messages;
-            sscanf(messages_str, "MESSAGES %d", &num_messages);
-            printf("Number of emails in inbox: %d\n", num_messages);
-        }
-        else
-        {
-            printf("Failed to retrieve the number of messages.\n");
+            printf("%d. %s\n", subject_list.count - i, subject_list.subjects[i]);
         }
     }
 
