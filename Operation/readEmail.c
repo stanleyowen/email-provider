@@ -68,7 +68,7 @@ void readEmailByID(const char *outputFileName, char *mailServerURL, char *emailA
     curl_easy_cleanup(curl);
 
     // Execute the Python script
-    int result = system("python3 ./operation/parseHTML.py");
+    int result = system("python3 ./Script/parseHTML.py");
     if (result != 0)
     {
         fprintf(stderr, "Failed to execute the Python script.\n");

@@ -5,6 +5,7 @@
     "sendemail.h": "c",
     "deleteemail.h": "c",
     "reademail.h": "c",
-    "auth.h": "c"
+    "auth.h": "c",
+    "stdio.h": "c"
   }
 }
