@@ -1,5 +1,3 @@
-// https://wiki.sharewiz.net/doku.php?id=curl:perform_imap_queries_using_curl
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -8,34 +6,12 @@
 #include "auth.h"
 #include "readEmail.h"
 
-// Structure to hold the data for the callback
-struct write_data
-{
-    FILE *file;
-    int found_html;
-};
-
 // Callback function to write the response data
 static size_t write_callback(void *ptr, size_t size, size_t nmemb, void *userdata)
 {
-    struct write_data *data = (struct write_data *)userdata;
+    FILE *file = (FILE *)userdata;
     size_t total_size = size * nmemb;
-
-    // If HTML content has already been found, write directly to the file
-    if (data->found_html)
-    {
-        fwrite(ptr, size, nmemb, data->file);
-        return total_size;
-    }
-
-    // Search for the <!DOCTYPE keyword in the data
-    const char *html_start = strstr(ptr, "<!DOCTYPE");
-    if (html_start)
-    {
-        data->found_html = 1;
-        fwrite(html_start, 1, total_size - (html_start - (char *)ptr), data->file);
-    }
-
+    fwrite(ptr, size, nmemb, file);
     return total_size;
 }
 
@@ -50,7 +26,7 @@ void readEmailByID(const char *outputFileName, char *mailServerURL, char *emailA
 
     // Modify the URL to point to the inbox
     char url[256];
-    snprintf(url, sizeof(url), "%sINBOX/;UID=%s;SECTION=TEXT", mailServerURL, emailID);
+    snprintf(url, sizeof(url), "%sINBOX/;UID=%s", mailServerURL, emailID);
 
     // Open the output file to write the email content
     FILE *output_file = fopen(outputFileName, "wb");
@@ -63,9 +39,6 @@ void readEmailByID(const char *outputFileName, char *mailServerURL, char *emailA
 
     printf("Mail Server URL: %s\n", url);
 
-    // Initialize the write_data structure
-    struct write_data data = {output_file, 0};
-
     // Disable SSL verification to avoid certificate-related issues
     curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
     curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
@@ -76,7 +49,7 @@ void readEmailByID(const char *outputFileName, char *mailServerURL, char *emailA
 
     // Set the callback function to write the response data
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &data);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, output_file);
 
     // Perform the fetch
     CURLcode res = curl_easy_perform(curl);
