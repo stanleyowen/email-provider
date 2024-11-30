@@ -4,7 +4,6 @@ import re
 def parseHTML():
     with open('./output.html', 'r') as f:
         html = f.read()
-        print(html)
 
         # Extract headers
         headers = {}
@@ -20,7 +19,13 @@ def parseHTML():
         if content_type_match:
             html_content = html[content_type_match.end():]
         else:
-            html_content = ""
+            # If Content-Type: text/html; is not found, extract content after Subject
+            subject_pattern = re.compile(r'Subject: .+?\r?\n\r?\n', re.DOTALL)
+            subject_match = subject_pattern.search(html)
+            if subject_match:
+                html_content = html[subject_match.end():]
+            else:
+                html_content = ""
 
         # Prepare the content to be written back
         output_content = ""
@@ -42,6 +47,8 @@ def parseHTML():
         output_content = output_content.replace('=E2=80=A6', '...')
         output_content = output_content.replace('=E2=80=A8', ' ')
         output_content = output_content.replace('=E2=80=A9', ' ')
+
+        print(output_content)
 
         # remove the last two lines
         output_content = output_content.split('\n')
