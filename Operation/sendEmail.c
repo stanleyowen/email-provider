@@ -60,11 +60,11 @@ void sendEmail(char *mailServerURL, char *emailAddress, char *emailPassword, cha
 
     snprintf(payload_text, sizeof(payload_text),
              "To: %s\r\n"
-             "From: <B11315015@mail.ntust.edu.tw>\r\n"
+             "From: %s\r\n"
              "Subject: %s\r\n"
              "\r\n" /* empty line to divide headers from body, see RFC 5322 */
              "%s\r\n",
-             destinationEmail, emailSubject, emailContent);
+             destinationEmail, emailAddress, emailSubject, emailContent);
 
     // debug the payload
     printf("%s\n", payload_text);
