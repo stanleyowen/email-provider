@@ -2,8 +2,9 @@ import re
 
 
 def parseHTML():
-    with open('../output.html', 'r') as f:
+    with open('./output.html', 'r') as f:
         html = f.read()
+        print(html)
 
         # Extract headers
         headers = {}
@@ -12,10 +13,12 @@ def parseHTML():
             headers[match.group(1)] = match.group(
                 2).replace('<', '&lt;').replace('>', '&gt;')
 
-        # Extract content starting from <!DOCTYPE>
-        doctype_index = html.find('<!DOCTYPE')
-        if doctype_index != -1:
-            html_content = html[doctype_index:]
+        # Extract content starting from Content-Type: text/html;
+        content_type_pattern = re.compile(
+            r'Content-Type: text/html;.*?\r?\n\r?\n', re.DOTALL)
+        content_type_match = content_type_pattern.search(html)
+        if content_type_match:
+            html_content = html[content_type_match.end():]
         else:
             html_content = ""
 
@@ -45,8 +48,7 @@ def parseHTML():
         output_content = output_content[:-2]
         output_content = '\n'.join(output_content)
 
-        print(output_content)
-        with open('../output.html', 'w') as f:
+        with open('./output.html', 'w') as f:
             f.write(output_content)
         return
 
