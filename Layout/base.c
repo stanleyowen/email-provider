@@ -13,18 +13,19 @@
 void base(_Bool *continueSession, const char *outputFileName, const char *sessionFileName, char *mailServerURL, char *emailAddress, char *emailPassword)
 {
     int userChoice;
-
-    printf("Email Client\n");
-    printf("1. View Inbox\n");
-    printf("2. View Email\n");
-    printf("3. Delete Email\n");
-    printf("4. Compose Email\n");
-    printf("5. Logout\n");
-    printf("6. Exit\n");
+    char startNewSession;
 
     // Loop the prompt until the user decides to exit the application
     do
     {
+        printf("Email Client\n");
+        printf("1. View Inbox\n");
+        printf("2. View Email\n");
+        printf("3. Delete Email\n");
+        printf("4. Compose Email\n");
+        printf("5. Logout\n");
+        printf("6. Exit\n");
+
         printf("Enter your choice: ");
         scanf("%d", &userChoice);
 
@@ -53,18 +54,30 @@ void base(_Bool *continueSession, const char *outputFileName, const char *sessio
         else if (userChoice == 5)
         {
             delete_user_session(outputFileName, mailServerURL, emailAddress, emailPassword);
+
+            printf("Do you want to start a new session? (y/n): ");
+            scanf(" %c", &startNewSession);
+
+            if (startNewSession == 'y')
+            {
+            }
+            else if (startNewSession == 'n')
+            {
+                *continueSession = 0;
+            }
         }
         else if (userChoice == 6)
         {
             printf("Exiting application\n");
             *continueSession = 0;
-            break;
         }
         else
         {
             printf("Invalid choice. Please try again.\n");
         }
-    } while (continueSession != 0);
+
+        printf("\n");
+    } while (userChoice != 6 && userChoice != 5);
 
     curl_global_cleanup();
 

@@ -12,7 +12,7 @@ int main(void)
     char emailAddress[254], emailPassword[128], mailServerURL[500];
 
     // Declare a variable to continue the session
-    _Bool continueSession;
+    _Bool continueSession = 1;
 
     const char *sessionFileName = "session.txt";
     const char *outputFileName = "output.html";
