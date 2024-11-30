@@ -149,9 +149,9 @@ void readInbox(char *mailServerURL, char *emailAddress, char *emailPassword)
     else
     {
         printf("Number of emails in inbox: %d\n", subject_list.count);
-        for (int i = subject_list.count - 1; i >= 0; i--)
+        for (int i = 0; i < subject_list.count; i++)
         {
-            printf("%d. %s\n", subject_list.count - i, subject_list.subjects[i]);
+            printf("%d. %s\n", i + 1, subject_list.subjects[i]);
         }
     }
 
