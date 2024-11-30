@@ -67,6 +67,13 @@ void readEmailByID(const char *outputFileName, char *mailServerURL, char *emailA
     fclose(output_file);
     curl_easy_cleanup(curl);
 
+    // Execute the Python script
+    int result = system("python3 ./operation/parseHTML.py");
+    if (result != 0)
+    {
+        fprintf(stderr, "Failed to execute the Python script.\n");
+    }
+
     // Open the output file to display the email content with the default browser
 #ifdef _WIN32
     system("start output.html");
