@@ -5,8 +5,10 @@
 #include <time.h>
 
 #include "auth.h"
+#include "../Operation/drafts.h" // 引入 drafts.h
+#include "../Operation/sendEmail.h" 
 
-void composeEmail(char *destinationEmail, char *emailSubject, char *emailContent)
+void composeEmail(char *destinationEmail, char *emailSubject, char *emailContent, char *mailServerURL, char *emailAddress, char *emailPassword)
 {
     // _Bool advance = 0;
     // Initialize emailContent as an empty string
@@ -53,4 +55,19 @@ void composeEmail(char *destinationEmail, char *emailSubject, char *emailContent
     }
 
     // Could add the feature such as cc, bcc, attachments, etc in the future
+    char choice;
+    printf("Do you want to save this as a draft (y/n)? ");
+    scanf(" %c", &choice); // Notice the space before %c to capture the newline
+    if (choice == 'y' || choice == 'Y')
+    {
+        saveDraft(destinationEmail, emailSubject, emailContent);  // Save the email as a draft
+    }
+    else
+    {
+        // Proceed with sending the email
+        sendEmail(mailServerURL, emailAddress, emailPassword, destinationEmail, emailSubject, emailContent);
+    }
+
+
+
 }

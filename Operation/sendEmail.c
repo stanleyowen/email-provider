@@ -9,6 +9,7 @@
 
 static char payload_text[2024];
 
+
 struct upload_status
 {
     size_t bytes_read;
@@ -100,3 +101,4 @@ void sendEmail(char *mailServerURL, char *emailAddress, char *emailPassword, cha
     }
     curl_easy_cleanup(curl);
 }
+

@@ -6,6 +6,7 @@
 #include "auth.h"
 #include "session.h"
 
+
 /*
  * emailAddress: The email address to use for authentication (https://www.rfc-editor.org/errata/eid1690)
  * emailPassword: The password to use for authentication (https://stackoverflow.com/questions/98768/should-i-impose-a-maximum-length-on-passwords)

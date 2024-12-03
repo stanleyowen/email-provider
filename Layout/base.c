@@ -8,12 +8,14 @@
 #include "../Operation/readEmail.h"
 #include "../Operation/deleteEmail.h"
 #include "../Operation/sendEmail.h"
+#include "../Operation/drafts.h" // 引入 drafts.h
 
 // Print the layout of the email client
 void base(_Bool *continueSession, const char *outputFileName, const char *sessionFileName, char *mailServerURL, char *emailAddress, char *emailPassword)
 {
     int userChoice;
     char startNewSession;
+    
 
     // Loop the prompt until the user decides to exit the application
     do
@@ -23,8 +25,9 @@ void base(_Bool *continueSession, const char *outputFileName, const char *sessio
         printf("2. View Email\n");
         printf("3. Delete Email\n");
         printf("4. Compose Email\n");
-        printf("5. Logout\n");
-        printf("6. Exit\n");
+        printf("5. View Draft\n");
+        printf("6. Logout\n");
+        printf("7. Exit\n");
 
         printf("Enter your choice: ");
         scanf("%d", &userChoice);
@@ -47,11 +50,11 @@ void base(_Bool *continueSession, const char *outputFileName, const char *sessio
             char emailSubject[100];
             char emailContent[1000];
 
-            composeEmail(destinationEmail, emailSubject, emailContent);
+            composeEmail(destinationEmail, emailSubject, emailContent, mailServerURL, emailAddress, emailPassword);
 
-            sendEmail(mailServerURL, emailAddress, emailPassword, destinationEmail, emailSubject, emailContent);
+            //sendEmail(mailServerURL, emailAddress, emailPassword, destinationEmail, emailSubject, emailContent);
         }
-        else if (userChoice == 5)
+        else if (userChoice == 6)
         {
             delete_user_session(outputFileName, mailServerURL, emailAddress, emailPassword);
 
@@ -66,11 +69,16 @@ void base(_Bool *continueSession, const char *outputFileName, const char *sessio
                 *continueSession = 0;
             }
         }
-        else if (userChoice == 6)
+        else if (userChoice == 7)
         {
             printf("Exiting application\n");
             *continueSession = 0;
         }
+        else if (userChoice == 5) // View Drafts
+        {
+             viewDrafts();  // 新增一個函數來顯示草稿
+        }
+        
         else
         {
             printf("Invalid choice. Please try again.\n");
