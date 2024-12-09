@@ -14,23 +14,22 @@ void deleteEmailByID(const char *mailServerURL, char *emailAddress, char *emailP
     printf("Enter the email ID to delete: ");
     scanf("%9s", emailID);
 
-    // Construct the URL to delete the email
-    char url[256];
-    snprintf(url, sizeof(url), "%s%s", mailServerURL, emailID);
-    printf("Mail Server URL: %s\n", url);
+    // Construct the URL to select the mailbox
+    char selectMailboxURL[256];
+    snprintf(selectMailboxURL, sizeof(selectMailboxURL), "%sINBOX", mailServerURL);
+    printf("Mail Server URL: %s\n", selectMailboxURL);
 
     // Disable SSL verification to avoid certificate-related issues
     curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
     curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
 
-    // Set CURL options
+    // Set CURL options for selecting the mailbox
     curl_easy_setopt(curl, CURLOPT_USERNAME, emailAddress);
     curl_easy_setopt(curl, CURLOPT_PASSWORD, emailPassword);
-    curl_easy_setopt(curl, CURLOPT_URL, url);
-    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "DELE");
-    curl_easy_setopt(curl, CURLOPT_NOBODY, 1L);
+    curl_easy_setopt(curl, CURLOPT_URL, selectMailboxURL);
+    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "SELECT INBOX");
 
-    // Perform the request
+    // Perform the SELECT request
     CURLcode res = curl_easy_perform(curl);
     if (res != CURLE_OK)
     {
@@ -38,7 +37,31 @@ void deleteEmailByID(const char *mailServerURL, char *emailAddress, char *emailP
     }
     else
     {
-        printf("Email with ID %s deleted successfully.\n", emailID);
+        // Mark the email as deleted
+        char storeCommand[256];
+        snprintf(storeCommand, sizeof(storeCommand), "STORE %s +FLAGS \\Deleted", emailID);
+        curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, storeCommand);
+
+        // Perform the STORE request
+        res = curl_easy_perform(curl);
+        if (res != CURLE_OK)
+        {
+            fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+        }
+        else
+        {
+            // Expunge the deleted email
+            curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "EXPUNGE");
+            res = curl_easy_perform(curl);
+            if (res != CURLE_OK)
+            {
+                fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+            }
+            else
+            {
+                printf("Email with ID %s deleted successfully.\n", emailID);
+            }
+        }
     }
 
     curl_easy_cleanup(curl);
