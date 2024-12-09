@@ -6,6 +6,7 @@
     "deleteemail.h": "c",
     "reademail.h": "c",
     "auth.h": "c",
-    "stdio.h": "c"
+    "stdio.h": "c",
+    "curl.h": "c"
   }
 }

@@ -15,7 +15,6 @@ void base(_Bool *continueSession, const char *outputFileName, const char *sessio
 {
     int userChoice;
     char startNewSession;
-    
 
     // Loop the prompt until the user decides to exit the application
     do
@@ -52,7 +51,7 @@ void base(_Bool *continueSession, const char *outputFileName, const char *sessio
 
             composeEmail(destinationEmail, emailSubject, emailContent, mailServerURL, emailAddress, emailPassword);
 
-            //sendEmail(mailServerURL, emailAddress, emailPassword, destinationEmail, emailSubject, emailContent);
+            // sendEmail(mailServerURL, emailAddress, emailPassword, destinationEmail, emailSubject, emailContent);
         }
         else if (userChoice == 6)
         {
@@ -71,21 +70,21 @@ void base(_Bool *continueSession, const char *outputFileName, const char *sessio
         }
         else if (userChoice == 7)
         {
-            printf("Exiting application\n");
+            printf("Exiting application");
             *continueSession = 0;
         }
         else if (userChoice == 5) // View Drafts
         {
-             viewDrafts();  // 新增一個函數來顯示草稿
+            viewDrafts(); // 新增一個函數來顯示草稿
         }
-        
+
         else
         {
-            printf("Invalid choice. Please try again.\n");
+            printf("Invalid choice. Please try again.");
         }
 
         printf("\n");
-    } while (userChoice != 6 && userChoice != 5);
+    } while (userChoice != 6 && userChoice != 7 && *continueSession);
 
     curl_global_cleanup();
 

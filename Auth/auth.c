@@ -95,11 +95,16 @@ int login(const char *sessionFileName, char *mailServerURL, char *emailAddress, 
     {
         fprintf(stderr, "Failed to login: %s\n", curl_easy_strerror(res));
         curl_easy_cleanup(curl);
+
+        authenticate_user_input(emailAddress, emailPassword, mailServer);
+        combine_url(mailServerURL, accountType, mailServer, NULL);
+        save_user_session(sessionFileName, emailAddress, emailPassword, mailServer);
+
         return 0;
     }
     else
     {
-        printf("Login successful.\n");
+        printf("Login successful.\n\n");
         curl_easy_cleanup(curl);
         return 1;
     }
