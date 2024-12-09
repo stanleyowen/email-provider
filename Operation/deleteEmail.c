@@ -3,10 +3,14 @@
 #include <curl/curl.h>
 
 #include "auth.h"
+#include "readEmail.h"
 #include "deleteEmail.h"
 
 void deleteEmailByID(const char *mailServerURL, char *emailAddress, char *emailPassword)
 {
+    // Preview the inbox before deleting an email
+    previewInboxBeforeDelete(mailServerURL, emailAddress, emailPassword);
+
     CURL *curl = curl_easy_init();
     char emailID[10];
 

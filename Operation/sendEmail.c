@@ -9,7 +9,6 @@
 
 static char payload_text[2024];
 
-
 struct upload_status
 {
     size_t bytes_read;
@@ -84,7 +83,6 @@ void sendEmail(char *mailServerURL, char *emailAddress, char *emailPassword, cha
     curl_easy_setopt(curl, CURLOPT_READFUNCTION, payload_source);
     curl_easy_setopt(curl, CURLOPT_READDATA, &upload_ctx);
     curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
-    curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
 
     // Perform the request
     CURLcode res = curl_easy_perform(curl);
@@ -101,4 +99,3 @@ void sendEmail(char *mailServerURL, char *emailAddress, char *emailPassword, cha
     }
     curl_easy_cleanup(curl);
 }
-
