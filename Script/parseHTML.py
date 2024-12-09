@@ -5,8 +5,6 @@ def parseHTML():
     with open('./output.html', 'r') as f:
         html = f.read()
 
-        print(html)
-
         # Extract headers
         headers = {}
         header_pattern = re.compile(r'^(Subject|From|To): (.+)$', re.MULTILINE)

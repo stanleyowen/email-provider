@@ -61,6 +61,7 @@ void readEmailByID(const char *outputFileName, char *mailServerURL, char *emailA
     if (res != CURLE_OK)
     {
         fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));
+        return;
     }
     else
     {
@@ -75,6 +76,7 @@ void readEmailByID(const char *outputFileName, char *mailServerURL, char *emailA
     if (result != 0)
     {
         fprintf(stderr, "Failed to execute the Python script.\n");
+        return;
     }
 
     // Open the output file to display the email content with the default browser
