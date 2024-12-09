@@ -12,6 +12,8 @@ def parseHTML():
             headers[match.group(1)] = match.group(
                 2).replace('<', '&lt;').replace('>', '&gt;')
 
+        print(headers)
+
         # Extract content starting from Content-Type: text/html;
         content_type_pattern = re.compile(
             r'Content-Type: text/html;.*?\r?\n\r?\n', re.DOTALL)
@@ -19,13 +21,21 @@ def parseHTML():
         if content_type_match:
             html_content = html[content_type_match.end():]
         else:
-            # If Content-Type: text/html; is not found, extract content after Subject
-            subject_pattern = re.compile(r'Subject: .+?\r?\n\r?\n', re.DOTALL)
-            subject_match = subject_pattern.search(html)
-            if subject_match:
-                html_content = html[subject_match.end():]
+            # If Content-Type: text/html; is not found, check for Content-Type: text/plain;
+            content_type_pattern = re.compile(
+                r'Content-Type: text/plain;.*?\r?\n\r?\n', re.DOTALL)
+            content_type_match = content_type_pattern.search(html)
+            if content_type_match:
+                html_content = html[content_type_match.end():]
             else:
-                html_content = ""
+                # If neither Content-Type: text/html; nor Content-Type: text/plain; is found, extract content after Subject
+                subject_pattern = re.compile(
+                    r'Subject: .+?\r?\n\r?\n', re.DOTALL)
+                subject_match = subject_pattern.search(html)
+                if subject_match:
+                    html_content = html[subject_match.end():]
+                else:
+                    html_content = ""
 
         # Prepare the content to be written back
         output_content = ""
@@ -49,9 +59,9 @@ def parseHTML():
         output_content = output_content.replace('=E2=80=A9', ' ')
 
         # remove the last two lines
-        output_content = output_content.split('\n')
-        output_content = output_content[:-2]
-        output_content = '\n'.join(output_content)
+        # output_content = output_content.split('\n')
+        # output_content = output_content[:-2]
+        # output_content = '\n'.join(output_content)
 
         with open('./output.html', 'w') as f:
             f.write(output_content)
