@@ -5,6 +5,8 @@ def parseHTML():
     with open('./output.html', 'r') as f:
         html = f.read()
 
+        print(html)
+
         # Extract headers
         headers = {}
         header_pattern = re.compile(r'^(Subject|From|To): (.+)$', re.MULTILINE)
@@ -47,8 +49,6 @@ def parseHTML():
         output_content = output_content.replace('=E2=80=A6', '...')
         output_content = output_content.replace('=E2=80=A8', ' ')
         output_content = output_content.replace('=E2=80=A9', ' ')
-
-        print(output_content)
 
         # remove the last two lines
         output_content = output_content.split('\n')

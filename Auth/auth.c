@@ -6,7 +6,6 @@
 #include "auth.h"
 #include "session.h"
 
-
 /*
  * emailAddress: The email address to use for authentication (https://www.rfc-editor.org/errata/eid1690)
  * emailPassword: The password to use for authentication (https://stackoverflow.com/questions/98768/should-i-impose-a-maximum-length-on-passwords)
@@ -22,7 +21,7 @@ void authenticate_user_input(char *emailAddress, char *emailPassword, char *mail
     scanf("%128s", emailPassword);
 
     printf("Mail Server\t\t\t: ");
-    scanf("%255s", mailServer);
+    scanf("%63s", mailServer);
 }
 
 /*
@@ -55,7 +54,7 @@ int login(const char *sessionFileName, char *mailServerURL, char *emailAddress, 
     FILE *session_file = fopen(sessionFileName, "r");
 
     // Declare necessary local variables and return it to the main function using pointers
-    char accountType[] = "imaps", mailServer[255];
+    char accountType[] = "imaps", mailServer[63];
 
     if (session_file)
     {
