@@ -21,6 +21,8 @@ static size_t write_callback(void *ptr, size_t size, size_t nmemb, void *userdat
 
 void readEmailByID(const char *outputFileName, char *mailServerURL, char *emailAddress, char *emailPassword)
 {
+    previewUIDInbox(mailServerURL, emailAddress, emailPassword);
+
     CURL *curl = curl_easy_init();
     char emailID[10];
 
@@ -102,7 +104,7 @@ typedef struct
     int count;
 } EmailInfoList;
 
-size_t write_callback_inbox(void *ptr, size_t size, size_t nmemb, void *userdata)
+size_t write_callback_uid_inbox(void *ptr, size_t size, size_t nmemb, void *userdata)
 {
     EmailInfoList *email_info_list = (EmailInfoList *)userdata;
     size_t total_size = size * nmemb;
@@ -136,7 +138,7 @@ size_t write_callback_inbox(void *ptr, size_t size, size_t nmemb, void *userdata
     return total_size;
 }
 
-void readInbox(char *mailServerURL, char *emailAddress, char *emailPassword)
+void previewUIDInbox(char *mailServerURL, char *emailAddress, char *emailPassword)
 {
     CURL *curl = curl_easy_init();
     EmailInfoList email_info_list = {.count = 0}; // Initialize the email info list
@@ -153,7 +155,7 @@ void readInbox(char *mailServerURL, char *emailAddress, char *emailPassword)
     curl_easy_setopt(curl, CURLOPT_PASSWORD, emailPassword);
     curl_easy_setopt(curl, CURLOPT_URL, url);
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "FETCH 1:* (UID BODY[HEADER.FIELDS (SUBJECT)])");
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback_inbox);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback_uid_inbox);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &email_info_list);
 
     CURLcode res = curl_easy_perform(curl);
@@ -183,7 +185,7 @@ typedef struct
     int count;
 } SubjectList;
 
-size_t write_callback_before_delete(void *ptr, size_t size, size_t nmemb, void *userdata)
+size_t write_callback_inbox(void *ptr, size_t size, size_t nmemb, void *userdata)
 {
     SubjectList *subject_list = (SubjectList *)userdata;
     size_t total_size = size * nmemb;
@@ -205,7 +207,7 @@ size_t write_callback_before_delete(void *ptr, size_t size, size_t nmemb, void *
     return total_size;
 }
 
-void previewInboxBeforeDelete(char *mailServerURL, char *emailAddress, char *emailPassword)
+void readInbox(char *mailServerURL, char *emailAddress, char *emailPassword)
 {
     CURL *curl = curl_easy_init();
     SubjectList subject_list = {.count = 0}; // Initialize the subject list
@@ -223,7 +225,7 @@ void previewInboxBeforeDelete(char *mailServerURL, char *emailAddress, char *ema
     curl_easy_setopt(curl, CURLOPT_URL, url);
     curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "FETCH 1:* (BODY[HEADER.FIELDS (SUBJECT)])");
     // curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "STATUS INBOX (MESSAGES)");
-    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback_before_delete);
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback_inbox);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &subject_list);
 
     CURLcode res = curl_easy_perform(curl);

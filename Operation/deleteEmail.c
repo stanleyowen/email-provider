@@ -9,7 +9,7 @@
 void deleteEmailByID(const char *mailServerURL, char *emailAddress, char *emailPassword)
 {
     // Preview the inbox before deleting an email
-    previewInboxBeforeDelete(mailServerURL, emailAddress, emailPassword);
+    readInbox(mailServerURL, emailAddress, emailPassword);
 
     CURL *curl = curl_easy_init();
     char emailID[10];
@@ -21,7 +21,6 @@ void deleteEmailByID(const char *mailServerURL, char *emailAddress, char *emailP
     // Construct the URL to select the mailbox
     char selectMailboxURL[256];
     snprintf(selectMailboxURL, sizeof(selectMailboxURL), "%sINBOX", mailServerURL);
-    printf("Mail Server URL: %s\n", selectMailboxURL);
 
     // Disable SSL verification to avoid certificate-related issues
     curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);

@@ -56,8 +56,6 @@ void sendEmail(char *mailServerURL, char *emailAddress, char *emailPassword, cha
     // Replace the first five characters of the mailServerURL from "pop3s" to "imaps"
     strncpy(url, "smtps", 5);
 
-    printf("%s\n", url);
-
     snprintf(payload_text, sizeof(payload_text),
              "To: %s\r\n"
              "From: %s\r\n"
@@ -65,9 +63,6 @@ void sendEmail(char *mailServerURL, char *emailAddress, char *emailPassword, cha
              "\r\n" /* empty line to divide headers from body, see RFC 5322 */
              "%s\r\n",
              destinationEmail, emailAddress, emailSubject, emailContent);
-
-    // debug the payload
-    printf("%s\n", payload_text);
 
     // Disable SSL verification to avoid certificate-related issues
     curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);

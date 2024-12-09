@@ -12,8 +12,6 @@ def parseHTML():
             headers[match.group(1)] = match.group(
                 2).replace('<', '&lt;').replace('>', '&gt;')
 
-        print(headers)
-
         # Extract content starting from Content-Type: text/html;
         content_type_pattern = re.compile(
             r'Content-Type: text/html;.*?\r?\n\r?\n', re.DOTALL)
