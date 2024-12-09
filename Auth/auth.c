@@ -21,7 +21,7 @@ void authenticate_user_input(char *emailAddress, char *emailPassword, char *mail
     scanf("%128s", emailPassword);
 
     printf("Mail Server\t\t\t: ");
-    scanf("%63s", mailServer);
+    scanf("%255s", mailServer);
 }
 
 /*
